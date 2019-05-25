@@ -94,7 +94,8 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
 
         viewDataBinding.root.postDelayed({
             //  click menu item if no valid data available
-            if (ConstantsUtil.OWNER_NAME.readStringFromPref().equals(ConstantsUtil.EMPTY, true) ||
+            if (
+                ConstantsUtil.OWNER_NAME.readStringFromPref().equals(ConstantsUtil.EMPTY, true) ||
                 ConstantsUtil.REPO_NAME.readStringFromPref().equals(ConstantsUtil.EMPTY, true)
             ) {
                 onOptionsItemSelected(downloadMenuItem)
@@ -128,7 +129,9 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
     //  data observer
     private fun initDataObserver() {
         viewModel.feedsLiveData.observe(this, Observer {
-
+            it.forEach {
+                println("---outch it is the value: ${it.avatarUrl}")
+            }
         })
     }
 }

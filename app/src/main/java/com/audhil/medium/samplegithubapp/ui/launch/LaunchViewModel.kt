@@ -1,7 +1,6 @@
 package com.audhil.medium.samplegithubapp.ui.launch
 
 import android.app.Application
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.audhil.medium.samplegithubapp.data.model.db.PullEntity
 import com.audhil.medium.samplegithubapp.ui.base.BaseViewModel

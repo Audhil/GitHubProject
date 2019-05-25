@@ -12,6 +12,7 @@ import com.audhil.medium.samplegithubapp.data.remote.AppAPIs
 import com.audhil.medium.samplegithubapp.repository.AppRepository
 import com.audhil.medium.samplegithubapp.util.ConstantsUtil
 import com.audhil.medium.samplegithubapp.util.GLog
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -84,6 +85,10 @@ class APIModule {
             .client(okHttpClient)
             .build()
             .create(AppAPIs::class.java)
+
+    @Provides
+    @Singleton
+    fun giveGSONInstance(): Gson = Gson()
 }
 
 //  shared pref

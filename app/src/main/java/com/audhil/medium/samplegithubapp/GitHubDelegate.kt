@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import com.audhil.medium.samplegithubapp.di.components.DaggerGitHubAppComponent
 import com.audhil.medium.samplegithubapp.di.components.GitHubAppComponent
 import com.audhil.medium.samplegithubapp.di.modules.ApplicationModule
+import com.facebook.stetho.Stetho
 import javax.inject.Inject
 
 class GitHubDelegate : Application() {
@@ -36,5 +37,6 @@ class GitHubDelegate : Application() {
             .applicationModule(ApplicationModule(this))
             .build()
         appDaggerComponent.inject(this)
+        Stetho.initializeWithDefaults(this)
     }
 }

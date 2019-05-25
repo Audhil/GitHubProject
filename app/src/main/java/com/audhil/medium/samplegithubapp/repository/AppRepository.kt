@@ -5,11 +5,13 @@ import com.audhil.medium.samplegithubapp.data.model.api.GitHubResponse
 import com.audhil.medium.samplegithubapp.data.model.db.PullEntity
 import com.audhil.medium.samplegithubapp.rx.makeFlowableRxConnection
 import com.audhil.medium.samplegithubapp.util.ConstantsUtil
+import com.google.gson.reflect.TypeToken
 import io.reactivex.disposables.Disposable
-
-//import okhttp3.ResponseBody
+import okhttp3.ResponseBody
 
 class AppRepository : BaseRepository() {
+
+    private val pullEntityList = mutableListOf<PullEntity>()
 
     //  fetch from db
     fun getPullFeedsFromDB(): LiveData<List<PullEntity>>? = dao.getPullList()
@@ -20,15 +22,31 @@ class AppRepository : BaseRepository() {
 
     override fun onSuccess(obj: Any?, tag: String) {
         when (tag) {
-            ConstantsUtil.FEEDS -> {
-                (obj as? GitHubResponse)?.let {
-                    println("---outch it is ${it.issueNumber}")
-                    println("---outch it is ${it.state}")
-                    println("---outch it is ${it.closedAt}")
-                    println("---outch it is ${it.user?.avatarUrl}")
-                    println("---outch it is ${it.user?.userName}")
+            ConstantsUtil.FEEDS ->
+                (obj as? ResponseBody)?.let {
+                    val pullList: ArrayList<GitHubResponse> =
+                        gson.fromJson((it.string()), object : TypeToken<ArrayList<GitHubResponse>>() {}.type)
+                    pullEntityList.clear()
+                    pullList.forEach { response ->
+                        pullEntityList.add(
+                            PullEntity(
+                                id = response.id,
+                                userName = response.user?.userName,
+                                avatarUrl = response.user?.avatarUrl,
+                                issueNo = response.issueNumber?.toInt(),
+                                title = response.title,
+                                state = response.state,
+                                createdAt = response.createdAt,
+                                closedAt = response.closedAt
+                            )
+                        )
+                    }
+                    //  insert into DB
+                    appExecutors.diskIOThread().execute {
+                        dao.insertPullList(feeds = pullEntityList)
+                    }
                 }
-            }
+
             else ->
                 Unit
         }
