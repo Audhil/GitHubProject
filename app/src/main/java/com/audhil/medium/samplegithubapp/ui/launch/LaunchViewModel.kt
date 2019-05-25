@@ -9,7 +9,7 @@ import com.audhil.medium.samplegithubapp.util.ConstantsUtil
 class LaunchViewModel(application: Application) : BaseViewModel(application) {
 
     //  fetching from server
-    val feedsLiveData = MediatorLiveData<List<PullEntity>>().apply {
+    val feedsLiveData = MediatorLiveData<MutableList<PullEntity>>().apply {
         addSource(appRepository.dao.getPullList()) {
             value = it
         }

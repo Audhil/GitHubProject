@@ -30,6 +30,9 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
 
     private var downloadMenuItem: MenuItem? = null
     private var page = 0
+    private val adapter by lazy {
+        FeedsAdapter()
+    }
 
     private val refreshListener = SwipeRefreshLayout.OnRefreshListener {
         viewModel.fetchFromServer(
@@ -92,8 +95,8 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
         initViews()
         initDataObserver()
 
+        //  click menu item if prior no valid data available
         viewDataBinding.root.postDelayed({
-            //  click menu item if no valid data available
             if (
                 ConstantsUtil.OWNER_NAME.readStringFromPref().equals(ConstantsUtil.EMPTY, true) ||
                 ConstantsUtil.REPO_NAME.readStringFromPref().equals(ConstantsUtil.EMPTY, true)
@@ -105,10 +108,13 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
 
     //  init views
     private fun initViews() {
-        viewDataBinding.swipeRefreshLayout.setOnRefreshListener(refreshListener)
+        viewDataBinding.apply {
+            swipeRefreshLayout.setOnRefreshListener(refreshListener)
+            recyclerView.adapter = adapter
+        }
     }
 
-    private fun initErrorObserver() {
+    private fun initErrorObserver() =
         viewModel.appRepository.errorLiveData.observe(this, Observer { networkError ->
             when (networkError) {
                 NetworkError.DISCONNECTED ->
@@ -123,15 +129,12 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
                     Unit
             }
         })
-    }
 
 
     //  data observer
     private fun initDataObserver() {
         viewModel.feedsLiveData.observe(this, Observer {
-            it.forEach {
-                println("---outch it is the value: ${it.avatarUrl}")
-            }
+            adapter.addFeeds(it)
         })
     }
 }

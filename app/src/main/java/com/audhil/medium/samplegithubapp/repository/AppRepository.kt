@@ -14,7 +14,7 @@ class AppRepository : BaseRepository() {
     private val pullEntityList = mutableListOf<PullEntity>()
 
     //  fetch from db
-    fun getPullFeedsFromDB(): LiveData<List<PullEntity>>? = dao.getPullList()
+    fun getPullFeedsFromDB(): LiveData<MutableList<PullEntity>>? = dao.getPullList()
 
     fun fetchFromServer(userName: String, userRepo: String, page: String = ConstantsUtil.ZERO): Disposable =
         appAPIs.getPullRequests(userName, userRepo, page)

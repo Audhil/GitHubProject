@@ -3,8 +3,10 @@
 
     <string name="repo_owner_name">Repo Owner Name</string>
     <string name="repo_name">Repo Name</string>
+    <string name="owner_image_desc">Owner image</string>
 
     <string name="no_internet">No network, pls try again later</string>
+    <string name="empty_text">No Pull Requests, It\'s empty</string>
 
     <string name="invalid_entries">InValid Entries</string>
 
