@@ -1,0 +1,68 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    defaultConfig {
+        applicationId "com.audhil.medium.samplegithubapp"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
+            'androidx.appcompat:appcompat:' + rootProject.appCompatVersion,
+            'androidx.core:core-ktx:' + rootProject.ktxVersion,
+            'androidx.constraintlayout:constraintlayout:' + rootProject.constraintLayoutVersion,
+
+            //  rxjava 2
+            'io.reactivex.rxjava2:rxjava:' + rootProject.rxJava2Version,
+            'io.reactivex.rxjava2:rxandroid:' + rootProject.rxAndroidVersion,
+
+            //  retrofit 2
+            'com.squareup.retrofit2:retrofit:' + rootProject.retrofit2Version,
+            'com.squareup.retrofit2:converter-gson:' + rootProject.retrofit2Version,
+            'com.squareup.retrofit2:adapter-rxjava2:' + rootProject.retrofit2Version,
+            'com.squareup.okhttp3:logging-interceptor:' + rootProject.retrofit2LoggingVersion,
+
+            //  arch components
+            'android.arch.lifecycle:extensions:' + rootProject.archComponentsVersion,
+            'android.arch.persistence.room:runtime:' + rootProject.archComponentsVersion,
+            'android.arch.persistence.room:rxjava2:' + rootProject.archComponentsVersion,
+
+            //  dagger 2
+            'com.google.dagger:dagger:' + rootProject.dagger2Version,
+            'com.github.bumptech.glide:glide:' + rootProject.glideVersion
+
+
+    //  room lib
+    kapt 'android.arch.persistence.room:compiler:' + rootProject.archComponentsVersion,
+
+            //  dagger 2
+            'com.google.dagger:dagger-compiler:' + rootProject.dagger2Version,
+
+            //  glide
+            'com.github.bumptech.glide:compiler:' + rootProject.glideVersion
+
+
+    testImplementation 'junit:junit:' + rootProject.jUnitVersion
+    androidTestImplementation 'androidx.test:runner:' + rootProject.testRunnerVersion,
+            'androidx.test.espresso:espresso-core:' + rootProject.espressoVersion
+}
