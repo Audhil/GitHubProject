@@ -22,6 +22,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
@@ -30,7 +34,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
             'androidx.appcompat:appcompat:' + rootProject.appCompatVersion,
             'androidx.core:core-ktx:' + rootProject.ktxVersion,
+            'androidx.cardview:cardview:' + rootProject.cardViewVersion,
             'androidx.constraintlayout:constraintlayout:' + rootProject.constraintLayoutVersion,
+            'com.google.android.material:material:' + rootProject.materialLibVersion,
 
             //  rxjava 2
             'io.reactivex.rxjava2:rxjava:' + rootProject.rxJava2Version,

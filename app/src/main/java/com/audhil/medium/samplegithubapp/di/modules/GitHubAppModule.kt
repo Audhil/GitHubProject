@@ -1,9 +1,14 @@
 package com.audhil.medium.samplegithubapp.di.modules
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import com.audhil.medium.samplegithubapp.SampleGitHubApp
-import com.audhil.medium.samplegithubapp.data.AppAPIs
+import androidx.room.Room
+import com.audhil.medium.samplegithubapp.GitHubDelegate
+import com.audhil.medium.samplegithubapp.data.local.dao.PullDao
+import com.audhil.medium.samplegithubapp.data.local.db.AppDataBase
+import com.audhil.medium.samplegithubapp.data.remote.AppAPIs
 import com.audhil.medium.samplegithubapp.util.ConstantsUtil
 import com.audhil.medium.samplegithubapp.util.GLog
 import com.google.gson.GsonBuilder
@@ -19,7 +24,7 @@ import javax.inject.Singleton
 
 //  Application module
 @Module
-class ApplicationModule(private val application: SampleGitHubApp) {
+class ApplicationModule(private val application: GitHubDelegate) {
 
     @Provides
     @Singleton
@@ -78,4 +83,51 @@ class APIModule {
             .client(okHttpClient)
             .build()
             .create(AppAPIs::class.java)
+}
+
+//  shared pref
+@Module
+class SharedPreferenceModule {
+
+    @Provides
+    @Singleton
+    fun giveAppPreference(): SharedPreferences =
+        GitHubDelegate.INSTANCE.getSharedPreferences(ConstantsUtil.APP_PREF_NAME, Context.MODE_PRIVATE)
+
+    @SuppressLint("CommitPrefEdits")
+    @Provides
+    @Singleton
+    fun giveAppPreferenceEditor(pref: SharedPreferences): SharedPreferences.Editor = pref.edit()
+}
+
+//  Database module
+@Module
+class DataBaseModule {
+
+    @Provides
+    @Singleton
+    fun giveUseInMemoryDB(): Boolean = false    /*  make "useInMemory = true" in TestCases */
+
+    @Provides
+    @Singleton
+    fun giveAppDataBase(context: Context, useInMemory: Boolean): AppDataBase {
+        val databaseBuilder = if (useInMemory)
+            Room.inMemoryDatabaseBuilder(
+                context,
+                AppDataBase::class.java
+            )
+        else
+            Room.databaseBuilder(
+                context,
+                AppDataBase::class.java,
+                AppDataBase.dbName
+            )
+
+        return databaseBuilder
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun givePullDao(db: AppDataBase): PullDao = db.pullDao()
 }

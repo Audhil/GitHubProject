@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SampleGitHubApp</string>
+
+    <string name="repo_owner_name">Repo Owner Name</string>
+    <string name="repo_name">Repo Name</string>
+
+    <string name="go">Go!</string>
 </resources>
