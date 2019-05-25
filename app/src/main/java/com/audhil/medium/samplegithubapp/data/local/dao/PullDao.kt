@@ -18,5 +18,5 @@ abstract class PullDao : BaseDao() {
     abstract fun insertPullList(feeds: ArrayList<PullEntity>): List<Long>
 
     @Query("select * from " + AppDBNames.PULL_TABLE_NAME)
-    abstract fun getPullList(): LiveData<List<PullEntity>>?
+    abstract fun getPullList(): LiveData<List<PullEntity>>
 }

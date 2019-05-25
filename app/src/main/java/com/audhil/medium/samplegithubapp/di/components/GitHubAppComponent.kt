@@ -13,7 +13,8 @@ import javax.inject.Singleton
         (ApplicationModule::class),
         (APIModule::class),
         (SharedPreferenceModule::class),
-        (DataBaseModule::class)
+        (DataBaseModule::class),
+        (RepositoryModule::class)
     ]
 )
 interface GitHubAppComponent {

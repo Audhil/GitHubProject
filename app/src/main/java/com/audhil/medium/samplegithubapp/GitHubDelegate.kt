@@ -2,9 +2,8 @@ package com.audhil.medium.samplegithubapp
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.view.inputmethod.InputMethodManager
-import com.audhil.medium.samplegithubapp.data.local.dao.PullDao
-import com.audhil.medium.samplegithubapp.data.remote.AppAPIs
 import com.audhil.medium.samplegithubapp.di.components.DaggerGitHubAppComponent
 import com.audhil.medium.samplegithubapp.di.components.GitHubAppComponent
 import com.audhil.medium.samplegithubapp.di.modules.ApplicationModule
@@ -20,10 +19,10 @@ class GitHubDelegate : Application() {
         private set
 
     @Inject
-    lateinit var apis: AppAPIs
+    lateinit var sPreferences: SharedPreferences
 
     @Inject
-    lateinit var pullDao: PullDao
+    lateinit var sPreferencesEditor: SharedPreferences.Editor
 
     var inputMethodManager: InputMethodManager? = null
 
@@ -37,21 +36,5 @@ class GitHubDelegate : Application() {
             .applicationModule(ApplicationModule(this))
             .build()
         appDaggerComponent.inject(this)
-
-//        apis.getPullRequests("octocat", "Hello-World", "0")
-//            .compose(AppRxSchedulers.applyFlowableSchedulers())
-//            .subscribeWith(object : DisposableSubscriber<ResponseBody>() {
-//                override fun onComplete() {
-//                    showVLog("onComplete()")
-//                }
-//
-//                override fun onNext(t: ResponseBody?) {
-//                    showVLog("onNext() response: ${t?.string()}")
-//                }
-//
-//                override fun onError(t: Throwable?) {
-//                    showVLog("onError()")
-//                }
-//            })
     }
 }

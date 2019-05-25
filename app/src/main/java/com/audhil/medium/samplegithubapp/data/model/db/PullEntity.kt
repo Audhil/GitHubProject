@@ -15,7 +15,7 @@ class PullEntity(
     @PrimaryKey(autoGenerate = true)
     var index: Int = 0,
     @ColumnInfo(name = PullTable.ID)
-    var id: Int = 0,
+    var id: Long = 0,
     @ColumnInfo(name = PullTable.USER_NAME)
     var userName: String? = null,
     @ColumnInfo(name = PullTable.AVATAR_URL)

@@ -2,6 +2,7 @@ package com.audhil.medium.samplegithubapp.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.widget.Toast
@@ -46,6 +47,58 @@ fun Context.isNetworkConnected(): Boolean {
     } else
         false
 }
+
+//  pref
+fun Any.writeToPref(
+    tag: String,
+    prefEditor: SharedPreferences.Editor = GitHubDelegate.INSTANCE.sPreferencesEditor
+) {
+    when (this) {
+        is String -> {
+            prefEditor.putString(tag, this)
+            showVLog("STRING WRITTEN TO PREF : key: $tag, value: $this")
+        }
+
+        is Int -> {
+            prefEditor.putInt(tag, this)
+            showVLog("INT WRITTEN TO PREF : key: $tag, value: $this")
+        }
+
+        is Long -> {
+            prefEditor.putLong(tag, this)
+            showVLog("LONG WRITTEN TO PREF : key: $tag, value: $this")
+        }
+
+        is Boolean -> {
+            prefEditor.putBoolean(tag, this)
+            showVLog("BOOLEAN WRITTEN TO PREF : key: $tag, value: $this")
+        }
+
+        is Float -> {
+            prefEditor.putFloat(tag, this)
+            showVLog("FLOAT WRITTEN TO PREF : key: $tag, value: $this")
+        }
+
+        else -> throw IllegalArgumentException("INVALID_INPUT_SHARED_PREFERENCE")
+    }
+    prefEditor.commit()
+}
+
+fun String.readStringFromPref(sPreferences: SharedPreferences = GitHubDelegate.INSTANCE.sPreferences): String =
+    sPreferences.getString(this, ConstantsUtil.EMPTY)
+
+fun String.readIntFromPref(sPreferences: SharedPreferences = GitHubDelegate.INSTANCE.sPreferences): Int =
+    sPreferences.getInt(this, 0)
+
+fun String.readLongFromPref(sPreferences: SharedPreferences = GitHubDelegate.INSTANCE.sPreferences): Long =
+    sPreferences.getLong(this, 0L)
+
+fun String.readBooleanFromPref(sPreferences: SharedPreferences = GitHubDelegate.INSTANCE.sPreferences): Boolean =
+    sPreferences.getBoolean(this, false)
+
+fun String.readFloatFromPref(sPreferences: SharedPreferences = GitHubDelegate.INSTANCE.sPreferences): Float =
+    sPreferences.getFloat(this, 0f)
+
 
 //  dialog helper
 inline fun Activity.showDataAlertDialog(func: DataDialogHelper.() -> Unit): AlertDialog =

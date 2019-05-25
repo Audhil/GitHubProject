@@ -9,6 +9,7 @@ import com.audhil.medium.samplegithubapp.GitHubDelegate
 import com.audhil.medium.samplegithubapp.data.local.dao.PullDao
 import com.audhil.medium.samplegithubapp.data.local.db.AppDataBase
 import com.audhil.medium.samplegithubapp.data.remote.AppAPIs
+import com.audhil.medium.samplegithubapp.repository.AppRepository
 import com.audhil.medium.samplegithubapp.util.ConstantsUtil
 import com.audhil.medium.samplegithubapp.util.GLog
 import com.google.gson.GsonBuilder
@@ -130,4 +131,11 @@ class DataBaseModule {
     @Provides
     @Singleton
     fun givePullDao(db: AppDataBase): PullDao = db.pullDao()
+}
+
+//  Repository module
+@Module
+class RepositoryModule {
+    @Provides
+    fun giveGPRepo(): AppRepository = AppRepository()
 }
