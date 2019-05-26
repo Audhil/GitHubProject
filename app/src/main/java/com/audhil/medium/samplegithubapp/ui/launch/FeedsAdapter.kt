@@ -89,8 +89,7 @@ class FeedsViewHolder(
     private val feedItemBinding: FeedItemBinding
 ) : RecyclerView.ViewHolder(feedItemBinding.root) {
 
-
-    private var prevPos: Int = 0
+//    private var prevPos: Int = 0
 
     fun bindTo(pullEntity: PullEntity, clickListener: BiCallBack<Int, PullEntity>?, position: Int) =
         feedItemBinding.apply {
@@ -99,18 +98,18 @@ class FeedsViewHolder(
             }
             pEntity = pullEntity
             executePendingBindings()
-            if (prevPos < position)
-                playAnimation(baseCardView)
-            prevPos = position
+//            if (prevPos < position)
+//                playAnimation(baseCardView)
+//            prevPos = position
         }
 
-    private fun playAnimation(baseCardView: CardView) =
-        AnimatorSet().apply {
-            duration = 200
-            playTogether(
-                ObjectAnimator.ofFloat(baseCardView, "scaleX", 0f, 1f),
-                ObjectAnimator.ofFloat(baseCardView, "scaleY", 0f, 1f)
-            )
-            start()
-        }
+//    private fun playAnimation(baseCardView: CardView) =
+//        AnimatorSet().apply {
+//            duration = 200
+//            playTogether(
+//                ObjectAnimator.ofFloat(baseCardView, "scaleX", 0f, 1f),
+//                ObjectAnimator.ofFloat(baseCardView, "scaleY", 0f, 1f)
+//            )
+//            start()
+//        }
 }
