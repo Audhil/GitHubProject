@@ -53,8 +53,8 @@
                         android:textStyle="bold"
                         android:layout_marginStart="20dp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        android:textColor="@android:color/black"
-                        app:layout_constraintTop_toTopOf="@+id/avatar_img"/>
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:textColor="@android:color/black"/>
 
                 <TextView
                         android:id="@+id/meta_data"

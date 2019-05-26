@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">SampleGitHubApp</string>
 
+    <string name="s_w_wrong" formatted="false">Oops! Something went wrong, may be\nInvalid owner %s,\nor\nrepo %s
+    </string>
+
     <string name="repo_owner_name">Repo Owner Name</string>
     <string name="repo_name">Repo Name</string>
     <string name="owner_image_desc">Owner image</string>
 
     <string name="no_internet">No network, pls try again later</string>
-    <string name="empty_text">No Pull Requests, It\'s empty</string>
+    <string name="empty_text">No Pull Requests, It\'s empty,\npls, wait a while!</string>
 
     <string name="invalid_entries">InValid Entries</string>
 

@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.audhil.medium.samplegithubapp.BR
 import com.audhil.medium.samplegithubapp.R
 import com.audhil.medium.samplegithubapp.data.model.api.NetworkError
 import com.audhil.medium.samplegithubapp.databinding.ActivityLaunchBinding
@@ -16,10 +17,9 @@ import kotlinx.android.synthetic.main.activity_launch.*
 
 class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewModel>() {
 
-    override val viewModelClass: Class<LaunchViewModel>
-        get() = LaunchViewModel::class.java
+    override val viewModelClass: Class<LaunchViewModel> = LaunchViewModel::class.java
 
-    override fun getBindingVariable(): Int = 0
+    override fun getBindingVariable(): Int = BR.launch_view_model
 
     override fun getLayoutId(): Int = R.layout.activity_launch
 
@@ -37,6 +37,7 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
     }
 
     private val refreshListener = SwipeRefreshLayout.OnRefreshListener {
+        viewModel.fullPageProgressVisibility.set(true)
         scrollListener?.resetState()
         viewModel.deleteTable()
         pageNo = 1
@@ -60,11 +61,21 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
                 showDataAlertDialog {
                     //  for sample
                     ownerEditText.apply {
-                        setText("octocat")
+                        setText(
+                            if (ConstantsUtil.OWNER_NAME.readStringFromPref().equals(ConstantsUtil.EMPTY, true))
+                                "octocat"
+                            else
+                                ConstantsUtil.OWNER_NAME.readStringFromPref()
+                        )
                         setSelection(ownerEditText.text.length)
                     }
                     repoEditText.apply {
-                        setText("Hello-World")
+                        setText(
+                            if (ConstantsUtil.REPO_NAME.readStringFromPref().equals(ConstantsUtil.EMPTY, true))
+                                "Hello-World"
+                            else
+                                ConstantsUtil.REPO_NAME.readStringFromPref()
+                        )
                         setSelection(repoEditText.text.length)
                     }
 
@@ -146,10 +157,25 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
         viewModel.appRepository.errorLiveData.observe(this, Observer { networkError ->
             viewDataBinding.swipeRefreshLayout.isRefreshing = false
             when (networkError) {
-                NetworkError.DISCONNECTED -> showVLog("Error : DISCONNECTED")
-                NetworkError.BAD_URL -> showVLog("Error : BAD_URL")
-                NetworkError.UNKNOWN -> showVLog("Error : UNKNOWN")
-                NetworkError.SOCKET_TIMEOUT -> showVLog("Error : SOCKET_TIMEOUT")
+                NetworkError.DISCONNECTED,
+                NetworkError.BAD_URL,
+                NetworkError.UNKNOWN,
+                NetworkError.SOCKET_TIMEOUT -> {
+                    if (!ConstantsUtil.OWNER_NAME.readStringFromPref().equals(
+                            ConstantsUtil.EMPTY,
+                            true
+                        ) && !ConstantsUtil.REPO_NAME.readStringFromPref().equals(ConstantsUtil.EMPTY, true)
+                    ) {
+                        String.format(
+                            getString(R.string.s_w_wrong),
+                            ConstantsUtil.OWNER_NAME.readStringFromPref(),
+                            ConstantsUtil.REPO_NAME.readStringFromPref()
+                        ).showToast()
+                    }
+                    viewDataBinding.swipeRefreshLayout.isRefreshing = false
+                    viewModel.fullPageProgressVisibility.set(false)
+                    feedsAdapter.addEmptyView()
+                }
                 else -> Unit
             }
         })
@@ -157,9 +183,21 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
 
     //  data observer
     private fun initDataObserver() {
-        viewModel.feedsLiveData.observe(this, Observer {
+        //  removing loading view
+        viewModel.appRepository.listEndCallBack = {
             viewDataBinding.swipeRefreshLayout.isRefreshing = false
-            feedsAdapter.addFeeds(it)
+            viewModel.fullPageProgressVisibility.set(false)
+            feedsAdapter.removeLoadingView()
+        }
+
+        //  data observer
+        viewModel.feedsLiveData.observe(this, Observer {
+            viewModel.fullPageProgressVisibility.set(false)
+            viewDataBinding.swipeRefreshLayout.isRefreshing = false
+            if (it.size > 0)
+                feedsAdapter.addFeeds(it)
+            else
+                feedsAdapter.addEmptyView()
         })
     }
 }

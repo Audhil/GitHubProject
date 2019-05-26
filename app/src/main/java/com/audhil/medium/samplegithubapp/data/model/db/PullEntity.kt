@@ -13,7 +13,7 @@ import com.audhil.medium.samplegithubapp.data.local.db.PullTable
     indices = [(Index(value = [PullTable.ID], unique = true))],
     tableName = AppDBNames.PULL_TABLE_NAME
 )
-class PullEntity(
+open class PullEntity(
     @PrimaryKey(autoGenerate = true)
     var index: Int = 0,
     @ColumnInfo(name = PullTable.ID)

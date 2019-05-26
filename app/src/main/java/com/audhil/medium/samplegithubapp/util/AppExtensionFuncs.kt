@@ -102,6 +102,8 @@ fun String.readFloatFromPref(sPreferences: SharedPreferences = GitHubDelegate.IN
 //  callbacks
 typealias BiCallBack<T, V> = (T, V) -> Unit
 
+typealias CallBack<T> = (T) -> Unit
+
 
 //  dialog helper
 inline fun Activity.showDataAlertDialog(func: DataDialogHelper.() -> Unit): AlertDialog =

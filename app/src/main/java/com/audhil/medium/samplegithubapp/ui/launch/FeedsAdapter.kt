@@ -1,11 +1,14 @@
 package com.audhil.medium.samplegithubapp.ui.launch
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.audhil.medium.samplegithubapp.data.model.db.PullEntity
-import com.audhil.medium.samplegithubapp.databinding.EmptyItemBinding
 import com.audhil.medium.samplegithubapp.databinding.FeedItemBinding
+import com.audhil.medium.samplegithubapp.ui.other.empty.EmptyItem
 import com.audhil.medium.samplegithubapp.ui.other.empty.EmptyViewHolder
 import com.audhil.medium.samplegithubapp.ui.other.loading.LoadingItemViewHolder
 import com.audhil.medium.samplegithubapp.util.BiCallBack
@@ -21,7 +24,7 @@ class FeedsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 LoadingItemViewHolder(parent)  //  loading_item.xml
 
             ViewTypes.EMPTY ->
-                EmptyViewHolder(EmptyItemBinding.inflate(LayoutInflater.from(parent.context)))  //  empty_item.xml
+                EmptyViewHolder(parent)  //  empty_item.xml
 
             else ->
                 FeedsViewHolder(FeedItemBinding.inflate(LayoutInflater.from(parent.context)))   //  feed_item.xml
@@ -43,7 +46,7 @@ class FeedsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         when {
             feeds[position] == null ->
                 ViewTypes.LOADING
-            feeds.size == 0 ->
+            feeds[position] is EmptyItem ->
                 ViewTypes.EMPTY
             else ->
                 ViewTypes.FEED
@@ -53,6 +56,22 @@ class FeedsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         feeds.clear()
         feeds.addAll(it)
         feeds.add(null)
+        notifyDataSetChanged()
+    }
+
+    fun addEmptyView() {
+        feeds.clear()
+        feeds.add(EmptyItem())
+        notifyDataSetChanged()
+    }
+
+    fun addLoadingView() {
+        feeds.add(null)
+        notifyDataSetChanged()
+    }
+
+    fun removeLoadingView() {
+        feeds.remove(null)
         notifyDataSetChanged()
     }
 }
@@ -70,6 +89,9 @@ class FeedsViewHolder(
     private val feedItemBinding: FeedItemBinding
 ) : RecyclerView.ViewHolder(feedItemBinding.root) {
 
+
+    private var prevPos: Int = 0
+
     fun bindTo(pullEntity: PullEntity, clickListener: BiCallBack<Int, PullEntity>?, position: Int) =
         feedItemBinding.apply {
             baseCardView.setOnClickListener {
@@ -77,5 +99,18 @@ class FeedsViewHolder(
             }
             pEntity = pullEntity
             executePendingBindings()
+            if (prevPos < position)
+                playAnimation(baseCardView)
+            prevPos = position
+        }
+
+    private fun playAnimation(baseCardView: CardView) =
+        AnimatorSet().apply {
+            duration = 200
+            playTogether(
+                ObjectAnimator.ofFloat(baseCardView, "scaleX", 0f, 1f),
+                ObjectAnimator.ofFloat(baseCardView, "scaleY", 0f, 1f)
+            )
+            start()
         }
 }

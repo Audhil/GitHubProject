@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.audhil.medium.samplegithubapp.data.model.api.GitHubResponse
 import com.audhil.medium.samplegithubapp.data.model.db.PullEntity
 import com.audhil.medium.samplegithubapp.rx.makeFlowableRxConnection
+import com.audhil.medium.samplegithubapp.util.CallBack
 import com.audhil.medium.samplegithubapp.util.ConstantsUtil
 import com.google.gson.reflect.TypeToken
 import io.reactivex.disposables.Disposable
@@ -11,10 +12,11 @@ import okhttp3.ResponseBody
 
 class AppRepository : BaseRepository() {
 
+    var listEndCallBack: CallBack<Unit>? = null
     private val pullEntityList = mutableListOf<PullEntity>()
 
     //  fetch from db
-    fun getPullFeedsFromDB(): LiveData<MutableList<PullEntity>>? = dao.getPullList()
+    fun getPullFeedsFromDB(): LiveData<MutableList<PullEntity>> = dao.getPullList()
 
     fun fetchFromServer(userName: String, userRepo: String, page: String = ConstantsUtil.ZERO): Disposable =
         appAPIs.getPullRequests(userName, userRepo, page)
@@ -26,6 +28,11 @@ class AppRepository : BaseRepository() {
                 (obj as? ResponseBody)?.let {
                     val pullList: ArrayList<GitHubResponse> =
                         gson.fromJson((it.string()), object : TypeToken<ArrayList<GitHubResponse>>() {}.type)
+
+                    //  reached end
+                    if (pullList.size == 0)
+                        listEndCallBack?.invoke(Unit)
+
                     pullEntityList.clear()
                     pullList.forEach { response ->
                         pullEntityList.add(

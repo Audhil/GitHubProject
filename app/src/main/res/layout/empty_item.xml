@@ -8,6 +8,7 @@
                 android:layout_centerInParent="true"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
+                android:gravity="center"
                 android:textSize="18dp"
                 android:text="@string/empty_text"/>
     </RelativeLayout>
