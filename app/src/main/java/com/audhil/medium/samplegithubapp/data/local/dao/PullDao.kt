@@ -14,9 +14,6 @@ abstract class PullDao : BaseDao() {
     @Query("DELETE FROM " + AppDBNames.PULL_TABLE_NAME)
     abstract override fun deleteTable()
 
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    abstract fun insertPullList(feeds: ArrayList<PullEntity>): List<Long>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertPullList(feeds: MutableList<PullEntity>): List<Long>
 

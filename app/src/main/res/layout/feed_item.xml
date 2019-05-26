@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="com.audhil.medium.samplegithubapp.util.ConstantsUtil"/>
+
         <variable
                 name="pEntity"
                 type="com.audhil.medium.samplegithubapp.data.model.db.PullEntity"/>
@@ -28,7 +30,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="20dp">
+                    android:padding="15dp">
 
                 <ImageView
                         android:id="@+id/avatar_img"
@@ -37,30 +39,32 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:imgURLToLoad="@{pEntity.avatarUrl}"
                         android:src="@drawable/ic_launcher_background"
                         android:contentDescription="@string/owner_image_desc"/>
 
                 <TextView
                         android:id="@+id/title"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         app:layout_constraintStart_toEndOf="@+id/avatar_img"
                         android:textSize="18sp"
+                        android:text="@{pEntity.title}"
                         android:textStyle="bold"
                         android:layout_marginStart="20dp"
-                        android:text="@{pEntity.title}"
-                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         android:textColor="@android:color/black"
                         app:layout_constraintTop_toTopOf="@+id/avatar_img"/>
 
                 <TextView
                         android:id="@+id/meta_data"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         app:layout_constraintStart_toStartOf="@+id/title"
                         android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
                         android:textSize="16sp"
-                        android:text="@{pEntity.avatarUrl}"
+                        android:text="@{ConstantsUtil.INSTANCE.makeALine(pEntity)}"
                         app:layout_constraintTop_toBottomOf="@+id/title"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

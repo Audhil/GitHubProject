@@ -10,6 +10,7 @@ import com.audhil.medium.samplegithubapp.R
 import com.audhil.medium.samplegithubapp.data.model.api.NetworkError
 import com.audhil.medium.samplegithubapp.databinding.ActivityLaunchBinding
 import com.audhil.medium.samplegithubapp.ui.base.BaseLifeCycleActivity
+import com.audhil.medium.samplegithubapp.ui.other.pagination.EndlessRecyclerViewScrollListener
 import com.audhil.medium.samplegithubapp.util.*
 import kotlinx.android.synthetic.main.activity_launch.*
 
@@ -29,16 +30,20 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
         showVLog("internetUnAvailable")
 
     private var downloadMenuItem: MenuItem? = null
-    private var page = 0
-    private val adapter by lazy {
+    private var pageNo = 1
+    private var scrollListener: EndlessRecyclerViewScrollListener? = null
+    private val feedsAdapter by lazy {
         FeedsAdapter()
     }
 
     private val refreshListener = SwipeRefreshLayout.OnRefreshListener {
+        scrollListener?.resetState()
+        viewModel.deleteTable()
+        pageNo = 1
         viewModel.fetchFromServer(
             userName = ConstantsUtil.OWNER_NAME.readStringFromPref(),
             userRepo = ConstantsUtil.REPO_NAME.readStringFromPref(),
-            page = page.toString()
+            page = pageNo.toString()
         )
     }
 
@@ -74,8 +79,6 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
                         }
                         ownerEditText.text.toString().writeToPref(ConstantsUtil.OWNER_NAME)
                         repoEditText.text.toString().writeToPref(ConstantsUtil.REPO_NAME)
-                        page = 0
-
                         refreshListener.onRefresh()
                         dialog?.dismiss()
                     }
@@ -110,23 +113,44 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
     private fun initViews() {
         viewDataBinding.apply {
             swipeRefreshLayout.setOnRefreshListener(refreshListener)
-            recyclerView.adapter = adapter
+            recyclerView.apply {
+                adapter = feedsAdapter
+                feedsAdapter.clickListener = { pos, item ->
+                    "pos: $pos, item: ${item.avatarUrl}".showToast()
+                }
+                layoutManager?.let {
+                    scrollListener = object : EndlessRecyclerViewScrollListener(it) {
+
+                        override fun onLoadMore(
+                            page: Int,
+                            totalItemsCount: Int,
+                            view: androidx.recyclerview.widget.RecyclerView
+                        ) {
+                            pageNo++
+                            viewModel.fetchFromServer(
+                                userName = ConstantsUtil.OWNER_NAME.readStringFromPref(),
+                                userRepo = ConstantsUtil.REPO_NAME.readStringFromPref(),
+                                page = pageNo.toString()
+                            )
+                        }
+                    }
+                }
+                scrollListener?.let {
+                    addOnScrollListener(it)
+                }
+            }
         }
     }
 
     private fun initErrorObserver() =
         viewModel.appRepository.errorLiveData.observe(this, Observer { networkError ->
+            viewDataBinding.swipeRefreshLayout.isRefreshing = false
             when (networkError) {
-                NetworkError.DISCONNECTED ->
-                    showVLog("Error : DISCONNECTED")
-                NetworkError.BAD_URL ->
-                    showVLog("Error : BAD_URL")
-                NetworkError.UNKNOWN ->
-                    showVLog("Error : UNKNOWN")
-                NetworkError.SOCKET_TIMEOUT ->
-                    showVLog("Error : SOCKET_TIMEOUT")
-                else ->
-                    Unit
+                NetworkError.DISCONNECTED -> showVLog("Error : DISCONNECTED")
+                NetworkError.BAD_URL -> showVLog("Error : BAD_URL")
+                NetworkError.UNKNOWN -> showVLog("Error : UNKNOWN")
+                NetworkError.SOCKET_TIMEOUT -> showVLog("Error : SOCKET_TIMEOUT")
+                else -> Unit
             }
         })
 
@@ -134,7 +158,8 @@ class LaunchActivity : BaseLifeCycleActivity<ActivityLaunchBinding, LaunchViewMo
     //  data observer
     private fun initDataObserver() {
         viewModel.feedsLiveData.observe(this, Observer {
-            adapter.addFeeds(it)
+            viewDataBinding.swipeRefreshLayout.isRefreshing = false
+            feedsAdapter.addFeeds(it)
         })
     }
 }

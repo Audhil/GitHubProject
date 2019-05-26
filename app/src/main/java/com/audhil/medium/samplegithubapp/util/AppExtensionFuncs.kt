@@ -99,6 +99,9 @@ fun String.readBooleanFromPref(sPreferences: SharedPreferences = GitHubDelegate.
 fun String.readFloatFromPref(sPreferences: SharedPreferences = GitHubDelegate.INSTANCE.sPreferences): Float =
     sPreferences.getFloat(this, 0f)
 
+//  callbacks
+typealias BiCallBack<T, V> = (T, V) -> Unit
+
 
 //  dialog helper
 inline fun Activity.showDataAlertDialog(func: DataDialogHelper.() -> Unit): AlertDialog =

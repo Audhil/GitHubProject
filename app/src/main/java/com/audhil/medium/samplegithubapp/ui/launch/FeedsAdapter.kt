@@ -6,18 +6,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.audhil.medium.samplegithubapp.data.model.db.PullEntity
 import com.audhil.medium.samplegithubapp.databinding.EmptyItemBinding
 import com.audhil.medium.samplegithubapp.databinding.FeedItemBinding
-import com.audhil.medium.samplegithubapp.databinding.LoadingItemBinding
 import com.audhil.medium.samplegithubapp.ui.other.empty.EmptyViewHolder
 import com.audhil.medium.samplegithubapp.ui.other.loading.LoadingItemViewHolder
+import com.audhil.medium.samplegithubapp.util.BiCallBack
 
 class FeedsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var feeds = mutableListOf<PullEntity?>()
+    var clickListener: BiCallBack<Int, PullEntity>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {
             ViewTypes.LOADING ->
-                LoadingItemViewHolder(LoadingItemBinding.inflate(LayoutInflater.from(parent.context)))  //  loading_item.xml
+                LoadingItemViewHolder(parent)  //  loading_item.xml
 
             ViewTypes.EMPTY ->
                 EmptyViewHolder(EmptyItemBinding.inflate(LayoutInflater.from(parent.context)))  //  empty_item.xml
@@ -28,14 +29,15 @@ class FeedsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount(): Int = feeds.size
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is FeedsViewHolder ->
-                holder.bindTo(feeds[position]!!)
+                holder.bindTo(feeds[position]!!, clickListener, position)
 
             else ->
                 Unit
         }
+    }
 
     override fun getItemViewType(position: Int): Int =
         when {
@@ -68,8 +70,12 @@ class FeedsViewHolder(
     private val feedItemBinding: FeedItemBinding
 ) : RecyclerView.ViewHolder(feedItemBinding.root) {
 
-    fun bindTo(pullEntity: PullEntity) {
-        feedItemBinding.pEntity = pullEntity
-        feedItemBinding.executePendingBindings()
-    }
+    fun bindTo(pullEntity: PullEntity, clickListener: BiCallBack<Int, PullEntity>?, position: Int) =
+        feedItemBinding.apply {
+            baseCardView.setOnClickListener {
+                clickListener?.invoke(position, pullEntity)
+            }
+            pEntity = pullEntity
+            executePendingBindings()
+        }
 }

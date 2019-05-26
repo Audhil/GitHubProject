@@ -20,4 +20,10 @@ class LaunchViewModel(application: Application) : BaseViewModel(application) {
         compositeDisposable.add(
             appRepository.fetchFromServer(userName, userRepo, page)
         )
+
+    //  delete table
+    fun deleteTable() =
+        appRepository.appExecutors.diskIOThread().execute {
+            appRepository.dao.deleteTable()
+        }
 }
