@@ -45,4 +45,6 @@ object ConstantsUtil {
                     pullEntity.createdAt
                 )
             )
+
+    fun justForTesting(inputString: String): String = inputString
 }
