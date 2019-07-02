@@ -23,14 +23,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.DummyActivity">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN"/>-->
-
-            <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-            <!--</intent-filter>-->
-
-        </activity>
+        <!--for testing sample-->
+        <activity android:name=".ui.DummyActivity"/>
     </application>
 
 </manifest>
