@@ -5,12 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import com.audhil.medium.samplegithubapp.GitHubDelegate
 import com.audhil.medium.samplegithubapp.R
 import com.audhil.medium.samplegithubapp.rx.AppRxSchedulers
+import com.audhil.medium.samplegithubapp.util.ConstantsUtil
 import com.audhil.medium.samplegithubapp.util.showVLog
 import com.google.gson.annotations.SerializedName
 import io.reactivex.subscribers.DisposableSubscriber
 import kotlinx.android.synthetic.main.activity_dummy.*
 
 class DummyActivity : AppCompatActivity() {
+
+    private val mockUrl by lazy {
+        intent?.extras?.getString(ConstantsUtil.MOCK_URL, null)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,8 +24,8 @@ class DummyActivity : AppCompatActivity() {
     }
 
     //  make server query
-    fun fetchFromServer(url: String) {
-        val disp = GitHubDelegate.INSTANCE.appAPIs.getSampleJson(url)
+    private fun fetchFromServer(url: String) {
+        val disp = GitHubDelegate.INSTANCE.appAPIs.getSampleJson(mockUrl ?: url)
             .compose(AppRxSchedulers.applyFlowableSchedulers())
             .subscribeWith(object : DisposableSubscriber<SampleJson>() {
                 override fun onComplete() {
