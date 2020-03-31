@@ -71,4 +71,8 @@ dependencies {
     testImplementation 'junit:junit:' + rootProject.jUnitVersion
     androidTestImplementation 'androidx.test:runner:' + rootProject.testRunnerVersion,
             'androidx.test.espresso:espresso-core:' + rootProject.espressoVersion
+            
+    androidTestImplementation('com.squareup.okhttp3:mockwebserver:3.14.2') {
+        exclude group: "com.squareup.okhttp3"
+    }
 }
